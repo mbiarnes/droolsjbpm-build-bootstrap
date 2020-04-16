@@ -35,7 +35,7 @@ pipeline {
                             def changeTarget = env.CHANGE_TARGET ?: env.ghprbTargetBranch
 
                             println "File ${file} does not exist. Loading the one from droolsjbpm-build-bootstrap project. Author [${changeAuthor}], branch [${changeBranch}]..."
-                            githubscm.checkoutIfExists('droolsjbpm-build-bootstrap', "${changeAuthor}", "${changeBranch}", 'kiegroup', "${changeTarget}")
+                            githubscm.checkoutIfExists('droolsjbpm-build-bootstrap', "${changeAuthor}", "${changeBranch}", 'mbiarnes', "${changeTarget}")
                             println "Loading ${file} file..."
                             load("${file}")
                         }
