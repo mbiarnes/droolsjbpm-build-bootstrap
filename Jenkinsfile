@@ -1,4 +1,4 @@
-@Library('jenkins-pipeline-shared-libraries-mbiarnes-test')_
+@Library('jenkins-pipeline-shared-libraries-test')_
 
 pipeline {
     agent {
