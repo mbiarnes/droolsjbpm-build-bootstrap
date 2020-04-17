@@ -19,11 +19,19 @@ pipeline {
 
             }
         }
+        stage('build sh script') {
+            steps {
+                script {
+                    mailer.buildLogScriptPR()
+                }
+            }
+        }
         stage('Build projects') {
             steps {
                 script {
                     def file =  (JOB_NAME =~ /\/[a-z,A-Z\-]*\.downstream\.production/).find() ? 'downstream.production.stages' :
                                 (JOB_NAME =~ /\/[a-z,A-Z\-]*\.downstream/).find() ? 'downstream.stages' :
+                                (JOB_NAME =~ /\/[a-z,A-Z\-]*\.pullrequest/).find() ? 'pullrequest.stages' :
                                 'upstream.stages'
                     if(fileExists("$WORKSPACE/${file}")) {
                         println "File ${file} exists, loading it."
@@ -45,19 +53,30 @@ pipeline {
         }
     }
     post {
-        unstable {
-            script {
-                mailer.sendEmailFailure()
-            }
+        always {
+            sh '$WORKSPACE/trace.sh'
+            junit allowEmptyResults: true, healthScaleFactor: 1.0, testResults: '**/target/*-reports/TEST-*.xml'
+            archiveArtifacts excludes: '**/target/checkstyle.log', artifacts: '**/target/*.log,**/target/testStatusListener*,**/target/screenshots/**,**/target/business-central*wildfly*.war,**/target/business-central*eap*.war,**/target/kie-server-*ee7.war,**/target/kie-server-*webc.war,**/target/jbpm-server*dist*.zip', fingerprint: false, defaultExcludes: true, caseSensitive: true, allowEmptyArchive: true
         }
         failure {
             script {
-                mailer.sendEmailFailure()
+                mailer.sendEmail_failedPR()
             }
+            cleanWs()
         }
-        always {
-            junit allowEmptyResults: true, healthScaleFactor: 1.0, testResults: '**/target/*-reports/TEST-*.xml'
-            archiveArtifacts excludes: '**/target/checkstyle.log', artifacts: '**/target/*.log,**/target/testStatusListener*,**/target/screenshots/**,**/target/business-central*wildfly*.war,**/target/business-central*eap*.war,**/target/kie-server-*ee7.war,**/target/kie-server-*webc.war,**/target/jbpm-server*dist*.zip', fingerprint: false, defaultExcludes: true, caseSensitive: true, allowEmptyArchive: true
+        unstable {
+            script {
+                mailer.sendEmail_unstablePR()
+            }
+            cleanWs()
+        }
+        fixed {
+            script {
+                mailer.sendEmail_fixedPR()
+            }
+            cleanWs()
+        }
+        success {
             cleanWs()
         }
     }
