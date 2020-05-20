@@ -64,10 +64,17 @@ pipeline {
     post {
         always {
             sh '$WORKSPACE/trace.sh'
-            junit allowEmptyResults: true, healthScaleFactor: 1.0, testResults: '**/target/*-reports/TEST-*.xml'
+            echo 'Findbugs:'
             findbugs canComputeNew: false, defaultEncoding: '', excludePattern: '', healthy: '', includePattern: '', pattern: '**/spotbugsXml.xml', unHealthy: ''
+
+            echo 'Checkstyle:'
             checkstyle canComputeNew: false, defaultEncoding: '', healthy: '', pattern: '**/checkstyle-result.xml', unHealthy: ''
-            archiveArtifacts allowEmptyArchive: true, artifacts: '**/*.maven.log, **/target/*.log,**/target/testStatusListener*' + additionalArtifactsToArchive, excludes: '**/target/checkstyle.log' + additionalExcludedArtifacts, fingerprint: false, defaultExcludes: true, caseSensitive: true
+
+            echo 'Archiving logs...'
+            archiveArtifacts excludes: '**/target/checkstyle.log', artifacts: '**/*.maven.log,**/target/*.log', fingerprint: false, defaultExcludes: true, caseSensitive: true, allowEmptyArchive: true
+
+            echo 'Archive artifacts...'
+            archiveArtifacts allowEmptyArchive: true, artifacts: '**/target/*.log,**/target/testStatusListener*' + additionalArtifactsToArchive, excludes: '**/target/checkstyle.log' + additionalExcludedArtifacts, fingerprint: false, defaultExcludes: true, caseSensitive: true
         }
         failure {
             script {
