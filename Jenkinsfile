@@ -14,7 +14,7 @@ pipeline {
         jdk 'kie-jdk1.8'
     }
     options {
-        buildDiscarder logRotator(artifactDaysToKeepStr: '', artifactNumToKeepStr: '', daysToKeepStr: '', numToKeepStr: '10')
+        buildDiscarder logRotator(artifactDaysToKeepStr: '', artifactNumToKeepStr: '', daysToKeepStr: '7', numToKeepStr: '')
         timestamps ()
         timeout(time: additionalTimeout, unit: 'MINUTES')
     }
