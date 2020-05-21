@@ -80,19 +80,29 @@ pipeline {
             echo'Archive artifacts'
             archiveArtifacts allowEmptyArchive: true, artifacts: '**/target/testStatusListener*' + additionalArtifactsToArchive, excludes: '**/target/checkstyle.log' + additionalExcludedArtifacts, fingerprint: false, defaultExcludes: true, caseSensitive: true
         }
+        fixed {
+            script {
+                mailer.sendEmail_fixedPR()
+            }
+        }
+        aborted {
+            script {
+                mailer.sendEmail_abortedPR()
+            }
+        }
         failure {
             script {
                 mailer.sendEmail_failedPR()
             }
         }
+        success {
+            script {
+                mailer.sendEmail_successPR()
+            }
+        }
         unstable {
             script {
                 mailer.sendEmail_unstablePR()
-            }
-        }
-        fixed {
-            script {
-                mailer.sendEmail_fixedPR()
             }
         }
         cleanup {
