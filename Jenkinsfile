@@ -4,6 +4,7 @@ agentLabel = "${env.ADDITIONAL_LABEL?.trim() ? ADDITIONAL_LABEL : 'kie-rhel7 && 
 additionalArtifactsToArchive = "${env.ADDITIONAL_ARTIFACTS_TO_ARCHIVE?.trim() ?: ''}"
 additionalTimeout = "${env.ADDITIONAL_TIMEOUT?.trim() ?: 1200}"
 additionalExcludedArtifacts = "${env.ADDITIONAL_EXCLUDED_ARTIFACTS?.trim() ?: ''}"
+checkstyleFile = "${env.CHECKSTYLE_FILE?.trim() ?: null}
 
 pipeline {
     agent {
@@ -70,9 +71,11 @@ pipeline {
 
             echo 'Findbugs reports ...'
             findbugs canComputeNew: false, defaultEncoding: '', excludePattern: '', healthy: '', includePattern: '', pattern: '**/spotbugsXml.xml', unHealthy: ''
-
-            echo 'Checkstyle reports ...'
-            checkstyle canComputeNew: false, defaultEncoding: '', healthy: '', pattern: '**/checkstyle-result.xml', unHealthy: ''
+            
+            if(checkstyleFile) {
+                echo 'Checkstyle reports ...'
+                checkstyle canComputeNew: false, defaultEncoding: '', healthy: '', pattern: checkstyleFile, unHealthy: ''
+            }
 
             echo 'Archiving logs...'
             archiveArtifacts excludes: '**/target/checkstyle.log', artifacts: '**/*.maven.log,**/target/*.log', fingerprint: false, defaultExcludes: true, caseSensitive: true, allowEmptyArchive: true
