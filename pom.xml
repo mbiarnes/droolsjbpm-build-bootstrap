@@ -19,7 +19,7 @@
   <!-- major.minor.micro.Alpha[n] -->
   <!-- major.minor.micro.Beta[n] -->
   <!-- major.minor.micro.CR[n] -->
-  <!-- major.minor.micro.Final xxx xxx xxx xxx xxx xxx xxx -->
+  <!-- major.minor.micro.Final -->
   <!-- For example: 1.2.3 without the suffix ".Final" corrupts the OSGi eclipse updatesite -->
   <!-- For example: 1.2.3.M2 corrupts the OSGi eclipse updatesite update order -->
   <version>7.43.0-SNAPSHOT</version>
@@ -35,7 +35,7 @@
   <organization>
     <name>JBoss by Red Hat</name>
     <url>http://www.jboss.org/</url>
-  </organization>GitHub hook trigger for GITScm polling
+  </organization>
   <licenses>
     <license>
       <name>The Apache Software License, Version 2.0</name>
